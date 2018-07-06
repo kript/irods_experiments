@@ -1,0 +1,42 @@
+version: "3"
+services:
+        icat:
+                image: mjstealey/irods-provider-postgres:latest
+                hostname: "icat"
+                networks:
+                        - "irods"
+                ports:
+                        - "1247:1247"
+                        - "1248:1248"
+                        - "20000-20199:20000-20199"
+                volumes:
+                        - icat_var_irods:/var/lib/irods
+                        - icat_etc_irods:/etc/irods
+                        - icat_var_pgdata:/var/lib/postgresql/data
+                env_file:
+                        - irods-provider.env
+        icommands:
+                image: mjstealey/docker-irods-icommands:latest
+                hostname: "icommands"
+                networks:
+                        - "irods"
+                env_file:
+                        - irods-icommands.env
+
+        metalnx:
+                image: metalnx/metalnx-web:1.1.0-latest
+                hostname: "metalynx"
+                networks:
+                        - "irods"
+                env_file:
+                        - irods-metalynx.env
+                ports:
+                        - "8080:8080"
+
+networks:
+        irods:
+
+volumes:
+        icat_var_irods:
+        icat_etc_irods:
+        icat_var_pgdata:
